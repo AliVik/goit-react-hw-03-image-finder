@@ -1,25 +1,28 @@
-import logo from "./logo.svg";
-import "./App.css";
+import React, { Component } from "react";
+import Searchbar from "./components/Searchbar";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+  state = {
+    searchName: "",
+  };
+  handleFormData = (data) => {
+    this.setState({ searchName: data });
+  };
+  componentDidUpdate(_, prevState) {
+    const previousSearchName = Object.values(prevState.searchName).join("");
+    const currentSearchName = Object.values(this.state.searchName).join("");
+
+    if (previousSearchName !== currentSearchName) {
+      console.log("делаем запрос на сервер");
+    }
+  }
+  render() {
+    return (
+      <>
+        <Searchbar onSubmit={this.handleFormData} />
+      </>
+    );
+  }
 }
 
 export default App;
