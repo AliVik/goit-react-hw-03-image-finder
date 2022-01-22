@@ -1,4 +1,5 @@
 import css from "./ImageGalleryItem.module.css";
+import PropTypes from "prop-types";
 
 export default function ImageGalleryItem({ id, webformatURL, largeImageURL }) {
   return (
@@ -9,3 +10,9 @@ export default function ImageGalleryItem({ id, webformatURL, largeImageURL }) {
     </li>
   );
 }
+
+ImageGalleryItem.propTypes = {
+  id: PropTypes.string,
+  webformatURL: PropTypes.string,
+  largeImageURL: PropTypes.string,
+};
