@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import { Toaster, toast } from "react-hot-toast";
 import errorStyle from "./helpers/general_styles/ErrorText.module.css";
+import css from "./helpers/general_styles/GalleryBox.module.css";
 import Searchbar from "./components/Searchbar";
 import Loader from "./components/Loader";
 import GetImagesFromApi from "./helpers/GetImagesFromAPI";
@@ -64,7 +65,7 @@ class App extends Component {
     const { isLoading, images, error } = this.state;
 
     return (
-      <div>
+      <>
         {error && (
           <p className={errorStyle.ErrorText}>Ups, something went wrong =(</p>
         )}
@@ -74,13 +75,16 @@ class App extends Component {
             onClick={this.onSearchBtnClick}
           />
         )}
-        {!error && !isLoading && <ImageGallery images={images} />}
-        {!isLoading && images.length > 0 && (
-          <Button onLoadBtnClick={this.onLoadMoreClick} />
-        )}
-        {isLoading && <Loader onLoad={this.state.isLoading} />}
+        <div className={css.Box}>
+          {!error && !isLoading && <ImageGallery images={images} />}
+          {!isLoading && images.length > 0 && (
+            <Button onLoadBtnClick={this.onLoadMoreClick} />
+          )}
+          {isLoading && <Loader onLoad={this.state.isLoading} />}
+        </div>
+
         <Toaster />
-      </div>
+      </>
     );
   }
 }
