@@ -1,25 +1,37 @@
 import React, { Component } from "react";
 import Searchbar from "./components/Searchbar";
+import GetImagesFromApi from "./helpers/GetImagesFromAPI";
+import ImageGallery from "./components/ImageGallery";
+import Button from "./components/Button";
 
 class App extends Component {
   state = {
     searchName: "",
+    images: [],
   };
   handleFormData = (data) => {
-    this.setState({ searchName: data });
+    this.setState({ searchName: data.formInput });
   };
-  componentDidUpdate(_, prevState) {
-    const previousSearchName = Object.values(prevState.searchName).join("");
-    const currentSearchName = Object.values(this.state.searchName).join("");
-
-    if (previousSearchName !== currentSearchName) {
-      console.log("делаем запрос на сервер");
+  async componentDidUpdate(_, prevState) {
+    if (prevState.searchName !== this.state.searchName) {
+      const imagesArr = await GetImagesFromApi(this.state.searchName);
+      this.setState({
+        images: imagesArr.hits.map((hit) => {
+          return {
+            id: hit.id,
+            webformatURL: hit.previewURL,
+            largeImageURL: hit.pageURL,
+          };
+        }),
+      });
     }
   }
   render() {
     return (
       <>
-        <Searchbar onSubmit={this.handleFormData} />
+        <Searchbar onFormSubmit={this.handleFormData} />
+        <ImageGallery images={this.state.images} />
+        {this.state.images.length > 0 && <Button />}
       </>
     );
   }
