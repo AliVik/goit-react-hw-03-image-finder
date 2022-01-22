@@ -1,5 +1,6 @@
 import { BallTriangle } from "react-loader-spinner";
 import css from "./Loader.module.css";
+import PropTypes from "prop-types";
 
 export default function Loader({ isLoading }) {
   return (
@@ -9,3 +10,7 @@ export default function Loader({ isLoading }) {
     </div>
   );
 }
+
+Loader.propTypes = {
+  isLoading: PropTypes.func,
+};
