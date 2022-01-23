@@ -22,4 +22,5 @@ export default function ImageGallery({ images, onImageClick }) {
 
 ImageGallery.propTypes = {
   images: PropTypes.arrayOf(PropTypes.shape),
+  onImageClick: PropTypes.func,
 };
