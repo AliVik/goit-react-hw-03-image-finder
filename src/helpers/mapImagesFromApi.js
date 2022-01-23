@@ -3,7 +3,7 @@ export default function mapImagesFromAPI(array) {
     return {
       id: hit.id,
       webformatURL: hit.previewURL,
-      largeImageURL: hit.pageURL,
+      largeImageURL: hit.largeImageURL,
     };
   });
 }
