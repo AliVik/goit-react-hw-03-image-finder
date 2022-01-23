@@ -3,12 +3,14 @@ import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import { Toaster, toast } from "react-hot-toast";
 import errorStyle from "./helpers/general_styles/ErrorText.module.css";
 import css from "./helpers/general_styles/GalleryBox.module.css";
+import img from "./helpers/general_styles/LargeImages.module.css";
 import Searchbar from "./components/Searchbar";
 import Loader from "./components/Loader";
 import GetImagesFromApi from "./helpers/GetImagesFromAPI";
 import mapImagesFromAPI from "./helpers/mapImagesFromApi";
 import ImageGallery from "./components/ImageGallery";
 import Button from "./components/Button";
+import ModalForm from "./components/Modal";
 
 class App extends Component {
   state = {
@@ -17,7 +19,33 @@ class App extends Component {
     page: 1,
     isLoading: false,
     error: null,
+    largeImageURL: "",
+    openedModal: false,
   };
+  async componentDidUpdate(_, prevState) {
+    const { searchName } = this.state;
+
+    if (prevState.searchName !== searchName) {
+      this.setState({ isLoading: true });
+      try {
+        const imagesArr = await GetImagesFromApi(searchName);
+        if (imagesArr.hits.length > 0) {
+          this.setState({
+            images: mapImagesFromAPI(imagesArr.hits),
+          });
+        } else {
+          toast(`There is no results with ${searchName.toUpperCase()}`);
+          return;
+        }
+      } catch (error) {
+        if (error.response || error.request) {
+          this.setState({ error });
+        }
+      } finally {
+        this.setState({ isLoading: false });
+      }
+    }
+  }
   handleFormData = (data) => {
     this.setState({ searchName: data.formInput });
   };
@@ -42,27 +70,16 @@ class App extends Component {
       toast.error("You haven`t written anything yet");
     }
   };
-  async componentDidUpdate(_, prevState) {
-    const { searchName } = this.state;
+  getClickedImage = (largeImageURL) => {
+    this.setState({ largeImageURL, openedModal: true });
+  };
 
-    if (prevState.searchName !== searchName) {
-      this.setState({ isLoading: true });
-      try {
-        const imagesArr = await GetImagesFromApi(this.state.searchName);
-        this.setState({
-          images: mapImagesFromAPI(imagesArr.hits),
-        });
-      } catch (error) {
-        if (error.response || error.request) {
-          this.setState({ error });
-        }
-      } finally {
-        this.setState({ isLoading: false });
-      }
-    }
-  }
+  toggleModal = () => {
+    this.setState(({ openedModal }) => ({ openedModal: !openedModal }));
+  };
+
   render() {
-    const { isLoading, images, error } = this.state;
+    const { isLoading, images, error, openedModal, largeImageURL } = this.state;
 
     return (
       <>
@@ -76,12 +93,19 @@ class App extends Component {
           />
         )}
         <div className={css.Box}>
-          {!error && !isLoading && <ImageGallery images={images} />}
+          {!error && !isLoading && (
+            <ImageGallery images={images} onImageClick={this.getClickedImage} />
+          )}
           {!isLoading && images.length > 0 && (
             <Button onLoadBtnClick={this.onLoadMoreClick} />
           )}
-          {isLoading && <Loader onLoad={this.state.isLoading} />}
+          {isLoading && <Loader onLoad={isLoading} />}
         </div>
+        {openedModal && (
+          <ModalForm onClose={this.toggleModal}>
+            <img src={largeImageURL} alt="" className={img.LargeImages} />
+          </ModalForm>
+        )}
 
         <Toaster />
       </>
