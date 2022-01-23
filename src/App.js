@@ -66,7 +66,8 @@ class App extends Component {
     }
   };
   onSearchBtnClick = () => {
-    if (this.state.searchName === "") {
+    const { searchName } = this.state;
+    if (searchName === "") {
       toast.error("You haven`t written anything yet");
     }
   };
@@ -96,7 +97,7 @@ class App extends Component {
           {!error && !isLoading && (
             <ImageGallery images={images} onImageClick={this.getClickedImage} />
           )}
-          {!isLoading && images.length > 0 && (
+          {!error && !isLoading && images.length > 0 && (
             <Button onLoadBtnClick={this.onLoadMoreClick} />
           )}
           {isLoading && <Loader onLoad={isLoading} />}
