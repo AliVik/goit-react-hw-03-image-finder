@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import { Toaster, toast } from "react-hot-toast";
+import { animateScroll as scroll } from "react-scroll";
 import errorStyle from "./helpers/general_styles/ErrorText.module.css";
 import css from "./helpers/general_styles/GalleryBox.module.css";
 import img from "./helpers/general_styles/LargeImages.module.css";
@@ -23,10 +24,10 @@ class App extends Component {
     openedModal: false,
   };
   async componentDidUpdate(_, prevState) {
-    const { searchName } = this.state;
+    let { searchName } = this.state;
 
-    if (prevState.searchName !== searchName) {
-      this.setState({ isLoading: true });
+    if (prevState.searchName !== searchName && searchName) {
+      this.setState({ isLoading: true, images: [] });
       try {
         const imagesArr = await GetImagesFromApi(searchName);
         if (imagesArr.hits.length > 0) {
@@ -46,6 +47,9 @@ class App extends Component {
       }
     }
   }
+  scrollToBottom = () => {
+    scroll.scrollToBottom();
+  };
   handleFormData = (data) => {
     this.setState({ searchName: data.formInput });
   };
@@ -61,16 +65,12 @@ class App extends Component {
       this.setState({
         images: [...images, ...mapImagesFromAPI(moreImages.hits)],
       });
+      this.scrollToBottom();
     } catch (error) {
       console.log(error);
     }
   };
-  onSearchBtnClick = () => {
-    const { searchName } = this.state;
-    if (searchName === "") {
-      toast.error("You haven`t written anything yet");
-    }
-  };
+
   getClickedImage = (largeImageURL) => {
     this.setState({ largeImageURL, openedModal: true });
   };
@@ -87,12 +87,7 @@ class App extends Component {
         {error && (
           <p className={errorStyle.ErrorText}>Ups, something went wrong =(</p>
         )}
-        {!error && (
-          <Searchbar
-            onFormSubmit={this.handleFormData}
-            onClick={this.onSearchBtnClick}
-          />
-        )}
+        {!error && <Searchbar onFormSubmit={this.handleFormData} />}
         <div className={css.Box}>
           {!error && !isLoading && (
             <ImageGallery images={images} onImageClick={this.getClickedImage} />
