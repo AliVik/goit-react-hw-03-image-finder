@@ -20,7 +20,6 @@ export default function ImageGalleryItem({
 }
 
 ImageGalleryItem.propTypes = {
-  id: PropTypes.string,
   webformatURL: PropTypes.string,
   largeImageURL: PropTypes.string,
   onImageClick: PropTypes.func,
