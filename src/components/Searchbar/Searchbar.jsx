@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { RiSearchEyeLine } from "react-icons/ri";
+import { Toaster, toast } from "react-hot-toast";
 import css from "./Searchbar.module.css";
 import PropTypes from "prop-types";
 
@@ -11,20 +12,22 @@ export default class Searchbar extends Component {
     this.setState({ formInput: evt.target.value });
   };
   onFormSubmit = (evt) => {
+    const { formInput } = this.state;
     evt.preventDefault();
     const form = evt.currentTarget;
     this.props.onFormSubmit(this.state);
+    this.setState({ formInput: "" });
+    if (formInput === "") {
+      toast.error("You haven`t written anything yet");
+    }
     form.reset();
   };
+
   render() {
     return (
       <header className={css.Header}>
         <form onSubmit={this.onFormSubmit} className={css.SearchForm}>
-          <button
-            type="button"
-            onClick={this.props.onClick}
-            className={css.SearchButton}
-          >
+          <button type="submit" className={css.SearchButton}>
             <RiSearchEyeLine
               style={{ width: "100%", height: "100%", color: "#fff" }}
             />
@@ -39,6 +42,7 @@ export default class Searchbar extends Component {
             className={css.SearchInput}
           />
         </form>
+        <Toaster />
       </header>
     );
   }
